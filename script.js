@@ -50,7 +50,7 @@ window.addEventListener("load", function () {
       let lineCounter = 0;
       let line = "";
       for (let i = 0; i < words.length; i++) {
-        let testLine = line + words[i] + "";
+        let testLine = line + words[i] + " ";
         if (this.context.measureText(testLine).width > this.maxTextWidth) {
           line = words[i] + " ";
           lineCounter++;
@@ -59,6 +59,9 @@ window.addEventListener("load", function () {
         }
         linesArray[lineCounter] = line;
       }
+      
+
+
       let textHeight = this.lineHeight * lineCounter;
       this.textY = this.canvasHeight / 2 - textHeight / 2;
       linesArray.forEach((element, index) => {
@@ -73,7 +76,7 @@ window.addEventListener("load", function () {
   }
 
   const effect = new Effect(ctx, canvas.width, canvas.height);
-  effect.wrapText("Hello");
+  effect.wrapText("Hello, how are you!");
   function animate() {}
 
   // function wrapText(text) {
