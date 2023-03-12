@@ -6,8 +6,28 @@ window.addEventListener("load", function () {
   canvas.height = window.innerHeight;
 
   class Particle {
-    constructor() {}
-    draw() {}
+    constructor(effect, x, y, color) {
+      this.effect = effect;
+      this.x = Math.random() * this.effect.canvasWidth;
+      this.y = 0;
+      this.color = color;
+      this.originX = x;
+      this.originY = y;
+      this.size = this.effect.gap;
+      this.dx = 0;
+      this.dy = 0;
+      this.vx = 0;
+      this.vy = 0;
+      this.force = 0;
+      this.angle = 0;
+      this.distance = 0;
+      this.friction = Math.random() * 0.6 + 0.15;
+      this.ease = Math.random() * 0.1 + 0.005;
+    }
+    draw() {
+      this.effect.context.fillStyle = this.color;
+      this.effect.context.fillRect(this.x, this.y, this.size, this.size)
+    }
     update() {}
   }
 
@@ -18,17 +38,31 @@ window.addEventListener("load", function () {
       this.canvasHeight = canvasHeight;
       this.textX = canvasWidth / 2;
       this.textY = canvasHeight / 2;
-      this.fontSize = 100;
-      this.lineHeight = this.fontSize * 0.8;
+      this.fontSize = 80;
+      this.lineHeight = this.fontSize * 0.9;
       this.maxTextWidth = this.canvasWidth * 0.8;
       this.textInput = document.getElementById("textInput");
       this.textInput.addEventListener("keyup", (event) => {
-        this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         if (event.key !== " ") {
+          this.context.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
           this.wrapText(event.target.value);
         }
       });
+
+      // Particle Text
+      this.particles = [];
+      this.gap = 3;
+      this.mouse = {
+        radius: 20000,
+        x: 0,
+        y: 0,
+      };
+      window.addEventListener("mousemove", (event) => {
+        this.mouse.x = event.x;
+        this.mouse.y = event.y;
+      });
     }
+
     wrapText(text) {
       // Canvas Settings
       const gradient = this.context.createLinearGradient(0, 0, canvas.width, canvas.height);
@@ -59,8 +93,6 @@ window.addEventListener("load", function () {
         }
         linesArray[lineCounter] = line;
       }
-      
-
 
       let textHeight = this.lineHeight * lineCounter;
       this.textY = this.canvasHeight / 2 - textHeight / 2;
@@ -68,9 +100,25 @@ window.addEventListener("load", function () {
         this.context.fillText(element, this.textX, this.textY + index * this.lineHeight);
         this.context.strokeText(element, this.textX, this.textY + index * this.lineHeight);
       });
+      this.convertToParticles();
     }
 
-    convertToParticles() {}
+    convertToParticles() {
+      this.particles = [];
+      const pixels = this.context.getImageData(0, 0, this.canvasWidth, this.canvasHeight).data;
+      for (let y = 0; y < this.canvasHeight; y += this.gap) {
+        for (let x = 0; x < this.canvasWidth; x += this.gap) {
+          const index = (y * this.canvasWidth + x) * 4;
+          const alpha = pixels[index + 3];
+          if (alpha > 0) {
+            const red = pixels[index];
+            const green = pixels[index];
+            const blue = pixels[index];
+            const color = "rgb(" + red + "," + green + "," + blue + ")"; // Remember to try to add alpha color as well
+          }
+        }
+      }
+    }
 
     render() {}
   }
